@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestTask"
         mc:Ignorable="d"
-        Title="NewBook" Height="251" Width="263">
+        Title="Книга" Height="251" Width="263">
     <Grid>
         <StackPanel>
             <TextBlock Text="Выбранный элемент"  />
