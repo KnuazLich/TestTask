@@ -1,0 +1,27 @@
+﻿<Window x:Name="Binfo" x:Class="TestTask.NewBook"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestTask"
+        mc:Ignorable="d"
+        Title="NewBook" Height="251" Width="263">
+    <Grid>
+        <StackPanel>
+            <TextBlock Text="Выбранный элемент"  />
+            <TextBlock Text="Инв. №" />
+            <TextBox Text="{Binding Path=InvNumber, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="Название" />
+            <TextBox Text="{Binding Path=BookName, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="Автор(ы)" />
+            <TextBox Text="{Binding Path=Authors, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="Год издания" />
+            <TextBox Text="{Binding Path=Year, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="Дата поступления" />
+            <DatePicker SelectedDate="{Binding Path=EntranceDate, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+            <Button Command="{Binding Add}" CommandParameter="{Binding ElementName=Binfo}">Сохранить изменения</Button>
+            <Button Command="{Binding CloseWindow }" CommandParameter="{Binding ElementName=Binfo}" Content="Отмена" />
+
+        </StackPanel>
+    </Grid>
+</Window>
