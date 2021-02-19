@@ -17,10 +17,10 @@ namespace TestTask
     /// </summary>
     public partial class ChuseStudent : Window
     {
-        public ChuseStudent(StudentVM VM)
+        public ChuseStudent()
         {
             InitializeComponent();
-            DataContext = VM;
+
         }
     }
 }

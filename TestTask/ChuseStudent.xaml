@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:TestTask"
         mc:Ignorable="d"
         Title="Выбрать студента" Height="250" Width="600">
+    <Window.DataContext>
+        <local:StudentVM/>
+    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

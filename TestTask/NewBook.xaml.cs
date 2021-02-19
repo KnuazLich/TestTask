@@ -17,9 +17,8 @@ namespace TestTask
     /// </summary>
     public partial class NewBook : Window
     {
-        public NewBook(BookVM o)
+        public NewBook()
         {
-            this.DataContext = o;
             InitializeComponent();
         }
     }

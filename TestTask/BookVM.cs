@@ -7,10 +7,16 @@ using System.Windows;
 
 namespace TestTask
 {
-    public class BookVM
+    public class BookVM 
     {
-        protected Book book;
-        protected Book realBook = null;
+        public static Book sbook;
+        public static Book srealBook;
+        public Book book;
+        public Book realBook = null;
+        private CommandsBookVMMethods bookVMMethods;
+        private CommandsAppVMMethods appVMMethods;
+
+
         private RelayCommand closeWindow;
         private RelayCommand add;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -69,13 +75,33 @@ namespace TestTask
                 OnPropertyChanged("Year");
             }
         }
+        public Book Book
+        {
+            get
+            {
+                return book;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    book = new Book { InvNumber = 0, BookName = "", Authors = "", Year = 0, EntranceDate = new DateTime(1, 1, 1) };
+                    sbook = book;
+                    srealBook = null;
+                    realBook = null;
+                }
+                else
+                {
+                    srealBook = realBook = value;
+                    sbook= book = (Book)value.Clone();
+                }
+            }
+        }
         public DateTime EntranceDate
         {
             get
             {
-
                 return book.EntranceDate;
-
             }
             set
             {
@@ -83,65 +109,59 @@ namespace TestTask
                 OnPropertyChanged("EntranceDate");
             }
         }
+        public CommandsBookVMMethods BookVMMethods
+        {
+            get
+            {
+                return bookVMMethods;
+            }
+            set
+            {
+                bookVMMethods = value;
+            }
+        }
+        public CommandsAppVMMethods AppVMMethods
+        {
+            get
+            {
+                return appVMMethods;
+            }
+            set
+            {
+                appVMMethods = value;
+            }
+        }
+
         public RelayCommand CloseWindow
         {
             get
             {
-                return closeWindow ?? (closeWindow = new RelayCommand(o =>
-                {
-                    ((Window)o)?.Close();
-                }));
+                return closeWindow ?? (closeWindow = new RelayCommand(AppVMMethods.DoCloseWindowCommand));
             }
-        }        
+        }
         public RelayCommand Add
         {
             get
             {
-                return add ??
-                    (add = new RelayCommand(obj =>
-                    {
-                        if (realBook == null)
-                        {
-                            AppVM.Books.Add(book);
-                            add_to_bd();
-                        }
-                        else
-                        {
-                            AppVM.Books[AppVM.Books.IndexOf(realBook)] = book;
-                            update_bd();
-                        }
-                        CloseWindow.Execute(obj);
-                    }));
-            }
-        }
-        public BookVM(Book b)
-        {
-            if (b == null)
-            {
-                book = new Book { InvNumber = 0, BookName = "", Authors = "", Year = 0, EntranceDate = new DateTime(1, 1, 1) };
-            }
-            else
-            {
-                realBook = b;
-                book = (Book)b.Clone();
+                return add ?? (add = new RelayCommand(BookVMMethods.DoAddCommand));
             }
         }
 
-        private void update_bd()
+        public BookVM()
         {
-            using (AppContext db = new AppContext())
+            if(AppVM.selectedBook  == null )
             {
-                db.Books.Update(book);
-                db.SaveChanges();
+                sbook = book = new Book { InvNumber = 0, BookName = "", Authors = "", Year = 0, EntranceDate = new DateTime(1, 1, 1) };
+                srealBook = realBook = null;
             }
-        }
-        private void add_to_bd()
-        {
-            using (AppContext db = new AppContext())
+            else
             {
-                db.Books.Add(book);
-                db.SaveChanges();
+                realBook = AppVM.selectedBook;
+                book = (Book)AppVM.selectedBook.Clone();
             }
+            
+            appVMMethods = new CommandsAppVMMethods();
+            bookVMMethods = new CommandsBookVMMethods();
         }
         
         public void OnPropertyChanged([CallerMemberName] string prop = "")

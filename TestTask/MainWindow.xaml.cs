@@ -23,7 +23,6 @@ namespace TestTask
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new AppVM();
         }
     }
 }

@@ -8,11 +8,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace TestTask
 {
     public class AppVM : INotifyPropertyChanged
     {
-        private Book selectedBook;
+        public static Book selectedBook;
         private RelayCommand newWindAdd;
         private RelayCommand newWindChange;
         private RelayCommand closeWindow;
@@ -22,80 +23,32 @@ namespace TestTask
         private RelayCommand chuseGivenBooks;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Action<object> close;
+        private Action<object> give;
+        private Action<object> removeBook;
+        private Action<object> newAdd;
+        private Action<object> changeBook;
+        private Action<object> take_away;
+        private Action<object> chuse;
+
+        private Func<object, bool> chekRemoveBook;
+        private Func<object, bool> chekGiveBook;
+        private Func<object, bool> chekNail;
+
         public static ObservableCollection<Book> Books { get; set; }
 
         public RelayCommand ChuseGivenBooks
         {
             get
             {
-                return chuseGivenBooks ??
-                    (chuseGivenBooks = new RelayCommand(o =>
-                    {
-                        if (((CheckBox)o).IsChecked == true)
-                        {
-                            List<Book> GivenBooks = new List<Book>();
-                            foreach (Book item in Books)
-                            {
-                                if (item.IssueDateDate != new DateTime(1, 1, 1))
-                                {
-                                    GivenBooks.Add(item);
-                                }
-                            }
-                            Books.Clear();
-                            foreach (Book item in GivenBooks)
-                            {
-                                Books.Add(item);
-                            }
-                        }
-                        else
-                        {
-                            Books.Clear();
-                            using (AppContext db = new AppContext())
-                            {
-                                List<Book> GivenBooks = db.Books.ToList();
-                                foreach (Book item in GivenBooks)
-                                {
-                                    Books.Add(item);
-                                }
-                            }
-                        }
-                    }));
+                return chuseGivenBooks ?? (chuseGivenBooks = new RelayCommand(chuse));
             }
         }
         public RelayCommand ReturnBook
         {
             get
             {
-                return returnBook ??
-                    (returnBook = new RelayCommand(obj =>
-                    {
-                        if (SelectedBook != null)
-                        {
-                            MessageBoxResult result = MessageBox.Show($"Принять книгу {SelectedBook.BookName}, у студента {SelectedBook.FullName}?", "Принять", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-                            {
-                                switch (result)
-                                {
-                                    case MessageBoxResult.Yes:
-                                        SelectedBook.FullName = null;
-                                        SelectedBook.IssueDateDate = new DateTime(1, 1, 1);
-                                        update_bd();
-                                        break;
-                                    case MessageBoxResult.No:
-                                        break;
-                                }
-                            }
-                        }
-
-                    },
-                    (obj) =>
-                    {
-                        if (SelectedBook != null)
-                        {
-                            if (SelectedBook?.IssueDateDate != new DateTime(1, 1, 1))
-                                return true;
-                        }
-                        return false;
-                    }));
+                return returnBook ?? (returnBook = new RelayCommand(take_away, chekNail));
             }
         }
         public RelayCommand NewWindAdd
@@ -103,82 +56,35 @@ namespace TestTask
             get
             {
                 return newWindAdd ??
-                    (newWindAdd = new RelayCommand(o =>
-                    {
-                        BookVM vm = new BookVM(null);
-                        NewBook b = new NewBook(vm);
-                        b.Show();
-                    }));
+                    (newWindAdd = new RelayCommand(newAdd));
             }
         }
         public RelayCommand GiveBook
         {
             get
             {
-                return giveBook ??
-                    (giveBook = new RelayCommand(o =>
-                    {
-                        StudentVM s = new StudentVM(selectedBook);
-                        ChuseStudent chuse = new ChuseStudent(s);
-                        chuse.Show();
-                    },
-                    (o) => {
-                        if (SelectedBook != null)
-                        {
-                            if (SelectedBook?.IssueDateDate == new DateTime(1, 1, 1))
-                                return true;
-                        }
-                        return false;
-                    }));
+                return giveBook ?? (giveBook = new RelayCommand(give,chekGiveBook));
             }
         }
         public RelayCommand NewWindChange
         {
             get
             {
-                return newWindChange ??
-                    (newWindChange = new RelayCommand(o =>
-                    {
-                        BookVM vm = new BookVM(SelectedBook);
-                        NewBook b = new NewBook(vm);
-                        b.Show();
-                    },
-                    (o) => SelectedBook != null));
+                return newWindChange ?? (newWindChange = new RelayCommand(changeBook, chekRemoveBook));
             }
         }
         public RelayCommand Remove
         {
             get
             {
-                return remove ??
-                    (remove = new RelayCommand(obj =>
-                    {
-                        MessageBoxResult result = MessageBox.Show($"Книга {SelectedBook.BookName}, будет удалена?", "Удалить", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-                        {
-                            switch (result)
-                            {
-                                case MessageBoxResult.Yes:
-                                    remove_from_bd();
-                                    Books.Remove(SelectedBook);
-                                    
-                                    break;
-                                case MessageBoxResult.No:
-                                    break;
-                            }
-                        }
-                    },
-                    (obj) => SelectedBook != null));
+                return remove ?? (remove = new RelayCommand(removeBook, chekRemoveBook));
             }
         }
         public RelayCommand CloseWindow
         {
             get
             {
-
-                return closeWindow ?? (closeWindow = new RelayCommand(o =>
-                 {
-                     ((Window)o)?.Close();
-                 }));
+                return closeWindow ?? (closeWindow = new RelayCommand(close));
             }
         }
         public Book SelectedBook
@@ -190,29 +96,25 @@ namespace TestTask
                 OnPropertyChanged("SelectedBook");
             }
         }
-        public AppVM()
+        //public AppVM(Action<object> close, Action<object> remove, Action<object> newadd, Action<object> change, Action<object> givetostudent, Action<object> takeAway, Action<object> chuseGivenBooks, Func<object, bool> chekselected, Func<object, bool> checkGive, Func<object, bool> checknail)
+        public AppVM(ICommandsMethods commandsMethods)
         {
+            this.close = commandsMethods.DoCloseWindowCommand;
+            removeBook = commandsMethods.DoRemoveBookCommand;
+            chekRemoveBook = commandsMethods.ChekSelected;
+            newAdd = commandsMethods.DoAddBookCommand;
+            changeBook = commandsMethods.DoChangeCommand;
+            give = commandsMethods.DoGiveCommand;
+            chekGiveBook = commandsMethods.ChekGiveAllowed;
+            take_away = commandsMethods.DoReturnCommand;
+            chekNail = commandsMethods.ChekReturnAllowed;
+            chuse = commandsMethods.DoChuseGivenBooksCommand;
+
             using (AppContext db = new AppContext())
             {
                 Books = new ObservableCollection<Book>(db.Books.ToList());
             }
         }
-        public void update_bd()
-        {
-            using (AppContext db = new AppContext())
-            {
-                db.Books.Update(SelectedBook);
-                db.SaveChanges();
-            }
-        }
-        public void remove_from_bd()
-        {
-            using (AppContext db = new AppContext())
-            {
-                db.Books.Remove(SelectedBook);
-                db.SaveChanges();
-            }
-        }        
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)

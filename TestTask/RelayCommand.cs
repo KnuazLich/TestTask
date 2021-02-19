@@ -9,6 +9,7 @@ namespace TestTask
     {
         private Action<object> execute;
         private Func<object, bool> canExecute;
+        public delegate void DbRemoveChanged(Book b);
 
         public event EventHandler CanExecuteChanged
         {

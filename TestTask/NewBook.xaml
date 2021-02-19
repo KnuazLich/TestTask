@@ -1,11 +1,11 @@
-﻿<Window x:Name="Binfo" x:Class="TestTask.NewBook"
+﻿<Window x:Name="NewBook1" x:Class="TestTask.NewBook"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TestTask"
-        mc:Ignorable="d"
-        Title="Книга" Height="251" Width="263">
+        xmlns:viewModels="clr-namespace:TestTask"
+        Title="Книга" Height="270" Width="263">
+    <Window.DataContext>
+        <viewModels:BookVM/>
+    </Window.DataContext>
     <Grid>
         <StackPanel>
             <TextBlock Text="Выбранный элемент"  />
@@ -19,8 +19,8 @@
             <TextBox Text="{Binding Path=Year, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="Дата поступления" />
             <DatePicker SelectedDate="{Binding Path=EntranceDate, UpdateSourceTrigger=PropertyChanged}"></DatePicker>
-            <Button Command="{Binding Add}" CommandParameter="{Binding ElementName=Binfo}">Сохранить изменения</Button>
-            <Button Command="{Binding CloseWindow }" CommandParameter="{Binding ElementName=Binfo}" Content="Отмена" />
+            <Button Command="{Binding Add}" CommandParameter="{Binding ElementName=NewBook1}">Сохранить изменения</Button>
+            <Button Command="{Binding CloseWindow }" CommandParameter="{Binding ElementName=NewBook1}" Content="Отмена" />
 
         </StackPanel>
     </Grid>

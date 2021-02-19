@@ -13,12 +13,14 @@ namespace TestTask
     public class StudentVM
     {
         private Book book;
-        private Student selectedStudent;
+        public static Student selectedStudent;
         private RelayCommand giveBook;
         private RelayCommand addStudent;
         private RelayCommand dellStudent;
         public RelayCommand closeWindow;
-        public ObservableCollection<Student> Students { get; set; }
+        public CommandsStudentVMMethods StudentVMMethods;
+        private CommandsAppVMMethods appVMMethods;
+        public static ObservableCollection<Student> Students { get; set; }
         public string Name
         {
             get { return selectedStudent.Name; }
@@ -42,14 +44,7 @@ namespace TestTask
             get
             {
                 return giveBook ??
-                  (giveBook = new RelayCommand(obj =>
-                  {
-                      book.FullName = selectedStudent.Name;
-                      book.IssueDateDate = DateTime.Now;
-                      update_bd();
-                      CloseWindow.Execute(obj);
-                  },
-                    (o) => selectedStudent != null));
+                  (giveBook = new RelayCommand(StudentVMMethods.DoGiveStudentCommand, StudentVMMethods.ChekSelected));
             }
         }       
         public RelayCommand DellStudent
@@ -57,13 +52,8 @@ namespace TestTask
             get
             {
                 return dellStudent ??
-                  (dellStudent = new RelayCommand(obj =>
-                  {
-remove_from_bd();
-                      Students.Remove(selectedStudent);
-                          
-                  },
-                    (o) => selectedStudent != null));
+                  (dellStudent = new RelayCommand(StudentVMMethods.DoDellStudentCommand,
+                    StudentVMMethods.ChekSelected));
             }
         }
         public RelayCommand AddStudent
@@ -71,59 +61,27 @@ remove_from_bd();
             get
             {
                 return addStudent ??
-                  (addStudent = new RelayCommand(obj =>
-                  {
-                      Student studen = new Student() {Name = ((TextBox)obj)?.Text};
-                      Students.Add(studen);
-                      add_student_to_bd(studen);
-                  },
-                  obj => ((TextBox)obj)?.Text!=""));
+                  (addStudent = new RelayCommand(StudentVMMethods.DoAddStudentCommand, StudentVMMethods.ChekNotEmpty));
             }
         }
         public RelayCommand CloseWindow
         {
             get
             {
-
-                return closeWindow ?? (closeWindow = new RelayCommand(o =>
-                {
-                    ((Window)o)?.Close();
-                }));
+                return closeWindow ?? (closeWindow = new RelayCommand(appVMMethods.DoCloseWindowCommand));
             }
         }
-        public StudentVM(Book b)
+        public StudentVM()
         {
-            book = b;
+            book = AppVM.selectedBook;
+            StudentVMMethods =new CommandsStudentVMMethods();
+            appVMMethods = new CommandsAppVMMethods();
             using (AppContext db = new AppContext())
             {
                 Students = new ObservableCollection<Student>(db.Students.ToList());
             }
         }
 
-        private void update_bd()
-        {
-            using (AppContext db = new AppContext())
-            {
-                db.Books.Update(book);
-                db.SaveChanges();
-            }
-        }
-        private void remove_from_bd()
-        {
-            using (AppContext db = new AppContext())
-            {
-                db.Students.Remove(selectedStudent);
-                db.SaveChanges();
-            }
-        }
-        private void add_student_to_bd(Student s)
-        {
-            using (AppContext db = new AppContext())
-            {
-               db.Students.Add(s);
-                db.SaveChanges();
-            }
-        }
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
