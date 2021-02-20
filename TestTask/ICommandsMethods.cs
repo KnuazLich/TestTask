@@ -17,7 +17,6 @@ namespace TestTask
         public void DoChangeCommand(object parameter);
         public void DoAddBookCommand(object parameter);
         public void DoCloseWindowCommand(object parameter);
-        public void DoRemoveBookCommand(object parameter);
         public bool ChekReturnAllowed(object parameter);
         public bool ChekSelected(object parameter);
         public bool ChekGiveAllowed(object parameter);

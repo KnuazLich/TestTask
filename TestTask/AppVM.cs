@@ -25,7 +25,6 @@ namespace TestTask
 
         private Action<object> close;
         private Action<object> give;
-        private Action<object> removeBook;
         private Action<object> newAdd;
         private Action<object> changeBook;
         private Action<object> take_away;
@@ -77,7 +76,7 @@ namespace TestTask
         {
             get
             {
-                return remove ?? (remove = new RelayCommand(o=>{ removeBook(o); DellComand= new NotifyTaskCompletion<int>(MyStaticService.TaskDelay()); }, chekRemoveBook));
+                return remove ?? (remove = new RelayCommand(o=>{DellComand= new NotifyTaskCompletion<int>(MyStaticService.TaskDelay(o)); }, chekRemoveBook));
             }
         }
         public RelayCommand CloseWindow
@@ -110,7 +109,6 @@ namespace TestTask
         {
             DellComand = new NotifyTaskCompletion<int>(MyStaticService.DoNothing());
             this.close = commandsMethods.DoCloseWindowCommand;
-            removeBook = commandsMethods.DoRemoveBookCommand;
             chekRemoveBook = commandsMethods.ChekSelected;
             newAdd = commandsMethods.DoAddBookCommand;
             changeBook = commandsMethods.DoChangeCommand;

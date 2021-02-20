@@ -86,23 +86,6 @@ namespace TestTask
             Window w = parameter as Window;
             (w)?.Close();
         }
-        public void DoRemoveBookCommand(object parameter)
-        {
-            Book selectedBook = parameter as Book;
-            MessageBoxResult result = MessageBox.Show($"Книга {selectedBook.BookName}, будет удалена?", "Удалить", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-            {
-                //is completed
-                switch (result)
-                {
-                    case MessageBoxResult.Yes:
-                        remove_from_bd(selectedBook);
-                        AppVM.Books.Remove(selectedBook);
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                }
-            }
-        }
         public bool ChekReturnAllowed(object parameter)
         {
             Book selectedBook = parameter as Book;
