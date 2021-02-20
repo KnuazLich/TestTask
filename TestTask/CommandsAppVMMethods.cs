@@ -9,10 +9,6 @@ namespace TestTask
 {
     public class CommandsAppVMMethods: ICommandsMethods
     {
-        public delegate void DbRemoveChanged(Book b);
-        public delegate void DbUpdateChanged(Book b);
-        public event DbRemoveChanged BookRemove;
-        public event DbUpdateChanged BookBack;
 
         public void DoChuseGivenBooksCommand(object parameter)
         {
@@ -57,7 +53,7 @@ namespace TestTask
                     case MessageBoxResult.Yes:
                         selectedBook.FullName = null;
                         selectedBook.IssueDateDate = new DateTime(1, 1, 1);
-                        BookBack?.Invoke(selectedBook);
+                        update_book_db(selectedBook);
                         break;
                     case MessageBoxResult.No:
                         break;
@@ -99,7 +95,7 @@ namespace TestTask
                 switch (result)
                 {
                     case MessageBoxResult.Yes:
-                        BookRemove?.Invoke(selectedBook);
+                        remove_from_bd(selectedBook);
                         AppVM.Books.Remove(selectedBook);
                         break;
                     case MessageBoxResult.No:
@@ -133,6 +129,23 @@ namespace TestTask
                     return true;
             }
             return false;
+        }
+        public void update_book_db(Book book)
+        {
+            using (AppContext db = new AppContext())
+            {
+                db.Books.Update(book);
+                db.SaveChanges();
+            }
+        }
+
+        public void remove_from_bd(Book book)
+        {
+            using (AppContext db = new AppContext())
+            {
+                db.Books.Remove(book);
+                db.SaveChanges();
+            }
         }
     }
 }

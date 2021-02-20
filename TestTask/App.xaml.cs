@@ -28,13 +28,8 @@ namespace TestTask
             container.RegisterType<AppVM>();
             container.RegisterType<BookVM>();
             container.RegisterType<ICommandsMethods, CommandsAppVMMethods>();
-            container.RegisterType<DbOperations>();
-            CommandsAppVMMethods cm = container.Resolve<CommandsAppVMMethods>();
-            DbOperations o = container.Resolve<DbOperations>();
             MainWindow mainWindow = container.Resolve<MainWindow>();
             mainWindow.DataContext = container.Resolve<AppVM>();
-            cm.BookBack += o.update_book_db;
-            cm.BookRemove += o.remove_from_bd;
             mainWindow.Show();
         }
 
