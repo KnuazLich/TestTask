@@ -9,7 +9,6 @@ namespace TestTask
 {
     public class CommandsAppVMMethods: ICommandsMethods
     {
-
         public void DoChuseGivenBooksCommand(object parameter)
         {
             CheckBox c = parameter as CheckBox;
@@ -92,6 +91,7 @@ namespace TestTask
             Book selectedBook = parameter as Book;
             MessageBoxResult result = MessageBox.Show($"Книга {selectedBook.BookName}, будет удалена?", "Удалить", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             {
+                //is completed
                 switch (result)
                 {
                     case MessageBoxResult.Yes:

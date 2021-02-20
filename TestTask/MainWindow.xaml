@@ -6,31 +6,38 @@
         xmlns:local="clr-namespace:TestTask"
         mc:Ignorable="d"
         Title="Список книг" Height="450" Width="800">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="ToVisibility"/>
+    </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition Width="0.4*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="0.4*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
             <DataGrid Grid.Column="0" ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}" AutoGenerateColumns="False" CanUserAddRows="False" >
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Инв. №" Binding="{Binding Path=InvNumber}" Width="0.5*" />
-                <DataGridTextColumn Header="Название" Binding="{Binding Path=BookName}" Width="0.7*" />
-                <DataGridTextColumn Header="Автор(ы)" Binding="{Binding Path=Authors}" Width="0.6*" />
-                <DataGridTextColumn Header="Год издания" Binding="{Binding Path=Year}" Width="0.6*" />
-                <DataGridTextColumn Header="Дата поступления" Binding="{Binding Path=EntranceDate}" Width="0.9*" />
-                <DataGridTextColumn Header="Дата выдачи студенту" Binding="{Binding Path=IssueDateDate}" Width="0.9*" />
-                <DataGridTextColumn Header="Ф.И.О. студента" Binding="{Binding Path=FullName}" Width="*" />
-            </DataGrid.Columns>
-        </DataGrid>        
-        <StackPanel Grid.Column="1">
-            <Button Height="20" Margin="5" Command="{Binding NewWindAdd}">Добавить новую книгу</Button>
-        <Button Height="20" Margin="5" Command="{Binding CloseWindow }" CommandParameter="{Binding ElementName=name}" Content="Закрыть" />
-            <Button Height="20" Margin="5" Command="{Binding Remove}" CommandParameter="{Binding SelectedBook}">Удалить книгу</Button>
-            <Button Height="20" Margin="5" Command="{Binding NewWindChange}" CommandParameter="{Binding SelectedBook}">Редактировать информацию о книге</Button>
-            <Button Height="20" Margin="5" Command="{Binding GiveBook}" CommandParameter="{Binding SelectedBook}">Выдать книгу студенту</Button>
-            <Button Height="20" Margin="5"  Command="{Binding ReturnBook}" CommandParameter="{Binding SelectedBook}">Получить книгу у студента</Button>
-            <CheckBox x:Name="chek" Height="20" Margin="5" Command="{Binding ChuseGivenBooks}" CommandParameter="{Binding ElementName=chek}">Отображать только выданные книги</CheckBox>
-    </StackPanel>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Инв. №" Binding="{Binding Path=InvNumber}" Width="0.5*" />
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=BookName}" Width="0.7*" />
+                    <DataGridTextColumn Header="Автор(ы)" Binding="{Binding Path=Authors}" Width="0.6*" />
+                    <DataGridTextColumn Header="Год издания" Binding="{Binding Path=Year}" Width="0.6*" />
+                    <DataGridTextColumn Header="Дата поступления" Binding="{Binding Path=EntranceDate}" Width="0.9*" />
+                    <DataGridTextColumn Header="Дата выдачи студенту" Binding="{Binding Path=IssueDateDate}" Width="0.9*" />
+                    <DataGridTextColumn Header="Ф.И.О. студента" Binding="{Binding Path=FullName}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Column="1">
+                <Button Height="20" Margin="5" Command="{Binding NewWindAdd}">Добавить новую книгу</Button>
+                <Button Height="20" Margin="5" Command="{Binding CloseWindow }" CommandParameter="{Binding ElementName=name}" Content="Закрыть" />
+                <Button Height="20" Margin="5" Command="{Binding Remove}" CommandParameter="{Binding SelectedBook}">Удалить книгу</Button>
+                <Button Height="20" Margin="5" Command="{Binding NewWindChange}" CommandParameter="{Binding SelectedBook}">Редактировать информацию о книге</Button>
+                <Button Height="20" Margin="5" Command="{Binding GiveBook}" CommandParameter="{Binding SelectedBook}">Выдать книгу студенту</Button>
+                <Button Height="20" Margin="5"  Command="{Binding ReturnBook}" CommandParameter="{Binding SelectedBook}">Получить книгу у студента</Button>
+                <CheckBox x:Name="chek" Height="20" Margin="5" Command="{Binding ChuseGivenBooks}" CommandParameter="{Binding ElementName=chek}">Отображать только выданные книги</CheckBox>
+            </StackPanel>
+        </Grid>
+        <Label Visibility="{Binding DellComand.IsNotCompleted,
+      Converter={StaticResource ToVisibility}}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Cursor="Wait"/>
     </Grid>
-    
 </Window>

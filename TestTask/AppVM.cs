@@ -77,7 +77,7 @@ namespace TestTask
         {
             get
             {
-                return remove ?? (remove = new RelayCommand(removeBook, chekRemoveBook));
+                return remove ?? (remove = new RelayCommand(o=>{ removeBook(o); DellComand= new NotifyTaskCompletion<int>(MyStaticService.TaskDelay()); }, chekRemoveBook));
             }
         }
         public RelayCommand CloseWindow
@@ -96,9 +96,19 @@ namespace TestTask
                 OnPropertyChanged("SelectedBook");
             }
         }
-        //public AppVM(Action<object> close, Action<object> remove, Action<object> newadd, Action<object> change, Action<object> givetostudent, Action<object> takeAway, Action<object> chuseGivenBooks, Func<object, bool> chekselected, Func<object, bool> checkGive, Func<object, bool> checknail)
+        public NotifyTaskCompletion<int> dellComand;
+        public NotifyTaskCompletion<int> DellComand 
+        {
+            get { return dellComand; }
+            set
+            {
+                dellComand = value;
+                OnPropertyChanged("DellComand");
+            }
+        } 
         public AppVM(ICommandsMethods commandsMethods)
         {
+            DellComand = new NotifyTaskCompletion<int>(MyStaticService.DoNothing());
             this.close = commandsMethods.DoCloseWindowCommand;
             removeBook = commandsMethods.DoRemoveBookCommand;
             chekRemoveBook = commandsMethods.ChekSelected;
@@ -109,7 +119,6 @@ namespace TestTask
             take_away = commandsMethods.DoReturnCommand;
             chekNail = commandsMethods.ChekReturnAllowed;
             chuse = commandsMethods.DoChuseGivenBooksCommand;
-
             using (AppContext db = new AppContext())
             {
                 Books = new ObservableCollection<Book>(db.Books.ToList());
@@ -120,5 +129,6 @@ namespace TestTask
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
     }
 }
